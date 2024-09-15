@@ -1,0 +1,32 @@
+import duckdb
+import pandas as pd
+
+# Data employee yang akan digunakan
+data = {
+    'employee_id': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    'employee_name': ['John', 'Jane', 'Alex', 'Maria', 'Steve', 'Mike', 'Laura', 'Kate', 'Tom', 'Anna', 'Paul', 'Diana'],
+    'salary': [75000, 82000, 90000, 65000, 98000, 102000, 86000, 74000, 69000, 92000, 76000, 88000]
+}
+
+# Convert the data to a pandas DataFrame
+df = pd.DataFrame(data)
+
+# Create an in-memory DuckDB database
+con = duckdb.connect(database=':memory:')
+
+# Register the pandas DataFrame as a DuckDB table
+con.register('employee_data', df)
+
+# SQL query untuk mendapatkan 10 gaji tertinggi
+query = """
+SELECT employee_name, salary
+FROM employee_data
+ORDER BY salary DESC
+LIMIT 10;
+"""
+
+# Execute the query
+top_salaries = con.execute(query).df()
+
+# Menampilkan hasil
+print(top_salaries)
